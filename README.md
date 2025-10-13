@@ -24,8 +24,7 @@ This is an open source tool designed to make playing Dragonbane easier and more 
 
 ✅ What You’ll Find Here
 - Open source code that automates and organizes parts of the game.  
-- Templates you can fill in with your own data (e.g., monsters, spells, items).  
-- References to the rulebook (like “see p. 45 for Willpower Points”) so you know where to look.  
+- Templates you can fill in with your own data (e.g., heroic abilities, spells).  
 
 🚫 What You Won’t Find Here
 - Full rulebook text or artwork.  
