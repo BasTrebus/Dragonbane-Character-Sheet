@@ -1,0 +1,156 @@
+[
+    {
+        "kin": "Human",
+        "abilities": [
+            {
+                "name": "Adaptive",
+                "wp": 1,
+                "description": "When rolling for a skill, you can choose to make the roll using another skill of your choice. You must be able to justify how you use the selected skill instead of the normal one. The GM has the final word, but should be lenient. You can adapt to different environments more easily than others. You have advantage on rolls to resist environmental hazards such as extreme temperatures, toxic atmospheres, or underwater breathing."
+            }
+        ]
+    },
+    {
+        "kin": "Halfling",
+        "abilities": [
+            {
+                "name": "Hard to catch",
+                "wp": 3,
+                "description": "You can activate this ability when dodging an attack, getting a boon to the EVADE roll."
+            }
+        ]
+    },
+    {
+        "kin": "Dwarf",
+        "abilities": [
+            {
+                "name": "Unforgiving",
+                "wp": 3,
+                "description": "You can activate this ability when attacking someone who harmed you in the past (at least 1 point of damage) and get a boon to the roll. It does not matter when the damage was inflicted. It may be wise to write down the names of everyone who harms you, so you do not forget them"
+            }
+        ]
+    },
+    {
+        "kin": "Elf",
+        "abilities": [
+            {
+                "name": "Inner Peace",
+                "wp": 0,
+                "description": "As an elf, you can meditate deeply during a stretch rest. You heal an additional D6 HP and a D6 extra WP, and can recover from an additional condition. You are completely unresponsive during your meditation and cannot be awakened."
+            }
+        ]
+    },
+    {
+        "kin": "Mallard",
+        "abilities": [
+            {
+                "name": "Ill-tempered",
+                "wp": 3,
+                "description": "Mallards tend to have a choleric temper. You can activate this ability (no action) when making a skill roll and get a boon to the roll. You also become Angry, if you're not already. This ability cannot be used for rolls against INT or INT-based skills."
+            },
+            {
+                "name": "Webbed Feet",
+                "wp": 0,
+                "description": "As a mallard you also get a boon to all SWIMMING rolls. You always move at full speed in or under water."
+            }
+        ]
+    },
+    {
+        "kin": "Wolfkin",
+        "abilities": [
+            {
+                "name": "Hunting instincts",
+                "wp": 3,
+                "description": "You can use this ability to designate a creature in sight, or a creature you can catch the scent of, as your prey. This counts as an action in combat. You can follow the scent of your prey for a full day, and you can spend 1 further WP (not an action) to gain a boon for an attack against your prey."
+            }
+        ]
+    },
+    {
+        "kin": "Orc",
+        "abilities": [
+            {
+                "name": "Tough",
+                "wp": 3,
+                "description": "Orcs can take extraordinary amounts of pain and keep on fighting. An orc with zero HP can activate this ability to automatically rally (page 50 in the rulebook), without rolling against WILor being PERSUADED by someone else. Usually, this ability is only used by player characters and important NPCs."
+            }
+        ]
+    },
+    {
+        "kin": "Ogre",
+        "abilities": [
+            {
+                "name": "Body slam",
+                "wp": 3,
+                "description": "Ogres can use their large bodies to slam an opponent with tremendous force. This counts as an unarmed melee attack with a boon that inflicts 2D6 bludgeoning damage (excluding the damage bonus) and cannot be parried. The ogre can also dash before the attack (but does not have to). Humanoid targets of Normal size or smaller who are hit by the attack are automatically knocked down."
+            }
+        ]
+    },
+    {
+        "kin": "Goblin",
+        "abilities": [
+            {
+                "name": "Resilient",
+                "wp": 1,
+                "description": "Goblins are resilient creatures capable of withstanding all kinds of hardships. By activating this ability, goblins get a boon on a CON roll for resisting poison or disease (pages 52-53 in the rulebook) or can make camp without rolling BUSHCRAFT (page 103 in the rulebook). In addition, goblins can always eat raw food without falling ill (no WP required)."
+            }
+        ]
+    },
+    {
+        "kin": "Hobgoblin",
+        "abilities": [
+            {
+                "name": "Fearless",
+                "wp": 2,
+                "description": "Hobgoblins are stalwart individuals who are not easily fazed. A hobgoblin can activate this ability to automatically succeed with a WIL roll for resisting fear (page 52 in the rulebook)."            }
+        ]
+    },
+    {
+        "kin": "Frog People",
+        "abilities": [
+            {
+                "name": "Leap",
+                "wp": 3,
+                "description": "Frog people can activate this ability to jump as far as their movement rating horizontally, or up to half their movement rating vertically. No ACROBATICS roll is required. The jump can end with a melee attack, which is made with a boon." 
+            }
+        ]
+    },
+    {
+        "kin": "Karkion",
+        "abilities": [
+            {
+                "name": "Wings",
+                "wp": 1,
+                "description": "The bat-like wings of a karkion allow it to move freely through the air at the same speed as on foot, at the cost of 1 WP per round."
+            }
+        ]
+    },
+    {
+        "kin": "Cat People",
+        "abilities": [
+            {
+                "name": "Nine lives",
+                "wp": "v",
+                "description": "Cat people have an incredible ability to emerge unscathed from even the worst of ordeals. Activating this ability grants a boon on a death roll (page 50 in the rulebook), at the cost of 3 WP. The ability can also be used to reduce the number of D6s rolled for fall damage by one per WP up to a maximum of three (after the ACROBATICS roll to mitigate the damage, see page 53 in the rulebook)."
+            }
+        ]
+    },
+    {
+        "kin": "Lizard People",
+        "abilities": [
+            {
+                "name": "Camouflage",
+                "wp": 2,
+                "description": "Lizard people who wish to stay hidden are hard to spot. Activating this ability grants a boon on a SNEAKING roll."
+            }
+        ]
+    },
+    {
+        "kin": "Satyr",
+        "abilities": [
+            {
+                "name": "Raise spirits",
+                "wp": 3,
+                "description": "Satyrs are cheerful and optimistic creatures who like to raise their friends' spirits with song or poetry. Activating this ability counts as an action and removes a chosen condition from a person within earshot and 10 meters. The ability cannot be used on the satyr itself."
+            }
+        ]
+    }
+]
