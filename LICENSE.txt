@@ -1,4 +1,4 @@
-                    GNU AFFERO GENERAL PUBLIC LICENSE
+7                    GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
  Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
@@ -659,3 +659,23 @@ specific requirements.
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
+
+------------------------------------------------------------
+Dragonbane Compatibility Notice
+
+This project is an independent, open source application designed for use with  
+the *Dragonbane* roleplaying game, published by Free League Publishing.  
+
+- This project does **not** reproduce or distribute any copyrighted text,  
+  artwork, or other proprietary content from the Dragonbane rulebooks.  
+- All Dragonbane trademarks, logos, and copyrighted material remain the  
+  property of Free League Publishing.  
+- This project is not affiliated with, endorsed, sponsored, or specifically  
+  approved by Free League Publishing.  
+- References to Dragonbane rules and terminology are made under the terms of  
+  Free League’s Third-Party Tabletop Module License, and require ownership of  
+  the official Dragonbane Core Rulebook to play.  
+
+Users must own a legal copy of the Dragonbane rulebook to fully utilize this  
+software.
+------------------------------------------------------------
