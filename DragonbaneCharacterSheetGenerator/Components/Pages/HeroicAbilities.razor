@@ -1,0 +1,124 @@
+@page "/heroic-abilities"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Microsoft.Maui.Storage
+
+<ErrorBoundary Context="err">
+    <ChildContent>
+        <h1>Heroic Abilities</h1>
+
+        <p>This page shows the list of heroic abilities from a local JSON file.</p>
+
+        <input class="form-control" placeholder="Search abilities by name or skill..." @bind="searchTerm" />
+
+        @if (abilities == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div class="row mt-3">
+                @foreach (var ability in FilteredAbilities)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@ability.Name <small class="text-muted">(WP: @ability.WPDisplay)</small></h5>
+                                @if (!string.IsNullOrWhiteSpace(ability.Skill))
+                                {
+                                    <h6 class="card-subtitle mb-2 text-muted">Skill: @ability.Skill (@ability.SkillMinDisplay)</h6>
+                                }
+                                <p class="card-text">@ability.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <p class="text-muted mt-3">@footerNote</p>
+        }
+    </ChildContent>
+
+    <ErrorContent>
+        <div class="alert alert-danger">
+            <h4>Unhandled error while rendering Heroic Abilities</h4>
+            <pre>@err.ToString()</pre>
+        </div>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    private List<HeroicAbility>? abilities;
+    private string? footerNote;
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<HeroicAbility> FilteredAbilities =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? abilities ?? Enumerable.Empty<HeroicAbility>()
+            : (abilities ?? Enumerable.Empty<HeroicAbility>()).Where(a =>
+                (a.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                (a.Skill ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                (a.Description ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            );
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Load the JSON from the app package (wwwroot is packaged with the app)
+            await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/heroicAbilities.json");
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var doc = await JsonSerializer.DeserializeAsync<HeroicAbilitiesDoc>(stream, options);
+
+            abilities = doc?.Abilities ?? new List<HeroicAbility>();
+            footerNote = doc?.FooterNote ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            abilities = new List<HeroicAbility>();
+            footerNote = $"Error loading abilities: {ex.GetType().Name}: {ex.Message}";
+        }
+    }
+
+    private class HeroicAbilitiesDoc
+    {
+        [JsonPropertyName("abilities")]
+        public List<HeroicAbility>? Abilities { get; set; }
+        [JsonPropertyName("footer_note")]
+        public string? FooterNote { get; set; }
+    }
+
+    private class HeroicAbility
+    {
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("wp")]
+        public JsonElement Wp { get; set; }
+
+        [JsonPropertyName("skill")]
+        public string? Skill { get; set; }
+
+        [JsonPropertyName("skill_min")]
+        public int? SkillMin { get; set; }
+
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+
+        public string WPDisplay
+        {
+            get
+            {
+                if (Wp.ValueKind == JsonValueKind.Undefined || Wp.ValueKind == JsonValueKind.Null)
+                    return "-";
+                if (Wp.ValueKind == JsonValueKind.Number && Wp.TryGetInt32(out var n))
+                    return n.ToString();
+                if (Wp.ValueKind == JsonValueKind.String)
+                    return Wp.GetString() ?? "-";
+                return Wp.ToString();
+            }
+        }
+
+        public string SkillMinDisplay => SkillMin?.ToString() ?? "-";
+    }
+}

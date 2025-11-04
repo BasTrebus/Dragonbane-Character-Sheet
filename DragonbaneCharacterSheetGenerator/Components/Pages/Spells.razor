@@ -1,0 +1,452 @@
+@page "/spells"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Microsoft.Maui.Storage
+@using System.Text.RegularExpressions
+
+<ErrorBoundary Context="err">
+ <ChildContent>
+ <h1>Spells</h1>
+
+ <p>Browse tricks and spells. Use the filters to narrow by type and school.</p>
+
+ <div class="row mb-3">
+ <div class="col-md-4">
+ <label class="form-label">Type</label>
+ <select class="form-select" @bind="selectedType">
+ <option value="Tricks">Tricks</option>
+ <option value="Spells">Spells</option>
+ </select>
+ </div>
+ <div class="col-md-4">
+ <label class="form-label">School</label>
+ <select class="form-select" @bind="selectedSchool">
+ <option value="All">All</option>
+ <option value="Animism">Animism</option>
+ <option value="Elementalism">Elementalism</option>
+ <option value="Mentalism">Mentalism</option>
+ </select>
+ </div>
+ <div class="col-md-4">
+ <label class="form-label">Search</label>
+ <input class="form-control" placeholder="Search by name or effect..." @bind="searchTerm" />
+ </div>
+ </div>
+
+ @if (doc == null)
+ {
+ <p><em>Loading...</em></p>
+ }
+ else
+ {
+ @if (selectedType == "Tricks")
+ {
+ <div class="row mt-3">
+ @foreach (var card in FilteredCards)
+ {
+ <div class="col-md-6 mb-3">
+ <div class="card h-100">
+ <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, false)">
+ <h5 class="card-title">@card.Title</h5>
+ <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
+ <p class="card-text">@card.Body</p>
+ </div>
+ </div>
+ </div>
+ }
+ </div>
+ }
+ else
+ {
+ @* Spells view: if All selected, group by General / Animism / Elementalism / Mentalism *@
+ @if (selectedSchool == "All")
+ {
+ <h3>General Spells</h3>
+ <div class="row">
+ @foreach (var s in (doc.GeneralSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
+ {
+ var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — {s.Requirements}", Body = $"Range: {s.Range} • Duration: {s.Duration}\n{s.Effect}", IsSpell = true, Spell = s };
+ <div class="col-md-6 mb-3">
+ <div class="card h-100">
+ <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
+ <h5 class="card-title">@card.Title</h5>
+ <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
+ <p class="card-text">@card.Body</p>
+ </div>
+ </div>
+ </div>
+ }
+ </div>
+
+ <h3 class="mt-4">Animism</h3>
+ <div class="row">
+ @foreach (var s in (doc.AnimismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
+ {
+ var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism", Body = s.Effect, IsSpell = true, Spell = s };
+ <div class="col-md-6 mb-3">
+ <div class="card h-100">
+ <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
+ <h5 class="card-title">@card.Title</h5>
+ <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
+ <p class="card-text">@card.Body</p>
+ </div>
+ </div>
+ </div>
+ }
+ </div>
+
+ <h3 class="mt-4">Elementalism</h3>
+ <div class="row">
+ @foreach (var s in (doc.ElementalismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
+ {
+ var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism", Body = s.Effect, IsSpell = true, Spell = s };
+ <div class="col-md-6 mb-3">
+ <div class="card h-100">
+ <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
+ <h5 class="card-title">@card.Title</h5>
+ <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
+ <p class="card-text">@card.Body</p>
+ </div>
+ </div>
+ </div>
+ }
+ </div>
+
+ <h3 class="mt-4">Mentalism</h3>
+ <div class="row">
+ @foreach (var s in (doc.MentalismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
+ {
+ var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism", Body = s.Effect, IsSpell = true, Spell = s };
+ <div class="col-md-6 mb-3">
+ <div class="card h-100">
+ <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
+ <h5 class="card-title">@card.Title</h5>
+ <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
+ <p class="card-text">@card.Body</p>
+ </div>
+ </div>
+ </div>
+ }
+ </div>
+ }
+ else
+ {
+ <div class="row mt-3">
+ @foreach (var card in FilteredCards)
+ {
+ <div class="col-md-6 mb-3">
+ <div class="card h-100">
+ <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
+ <h5 class="card-title">@card.Title</h5>
+ <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
+ <p class="card-text">@card.Body</p>
+ </div>
+ </div>
+ </div>
+ }
+ </div>
+ }
+ }
+ }
+
+ @* Modal *@
+ @if (showModal && modalCard != null)
+ {
+ <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+ <div class="modal-dialog modal-lg">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title">@modalCard.Title</h5>
+ <button type="button" class="btn-close" @onclick="CloseModal"></button>
+ </div>
+ <div class="modal-body">
+ <h6 class="text-muted">@modalCard.Subtitle</h6>
+ <p>@modalCard.Body</p>
+
+ @if (modalCard.IsSpell)
+ {
+ <div class="mb-3">
+ <label class="form-label">Power level</label>
+ <select class="form-select" @bind="selectedPowerLevel">
+ <option value="1">1</option>
+ <option value="2">2</option>
+ <option value="3">3</option>
+ </select>
+ </div>
+ <div class="card">
+ <div class="card-body">
+ <h6>Preview (power level @selectedPowerLevel)</h6>
+ <pre style="white-space: pre-wrap;">@GetScaledEffect(modalCard, selectedPowerLevel)</pre>
+ </div>
+ </div>
+ }
+ </div>
+ <div class="modal-footer">
+ <button class="btn btn-secondary" @onclick="CloseModal">Close</button>
+ </div>
+ </div>
+ </div>
+ </div>
+ }
+ </ChildContent>
+
+ <ErrorContent>
+ <div class="alert alert-danger">
+ <h4>Unhandled error while rendering Spells</h4>
+ <pre>@err.ToString()</pre>
+ </div>
+ </ErrorContent>
+</ErrorBoundary>
+
+@code {
+ private SpellsDoc? doc;
+ private string selectedType = "Tricks";
+ private string selectedSchool = "All";
+ private string searchTerm = string.Empty;
+
+ private bool showModal;
+ private CardView? modalCard;
+ private int selectedPowerLevel =1;
+
+ private IEnumerable<CardView> FilteredCards
+ {
+ get
+ {
+ if (doc == null) return Enumerable.Empty<CardView>();
+
+ var cards = new List<CardView>();
+
+ if (selectedType == "Tricks")
+ {
+ var all = doc.TricksAllSchools ?? new List<Trick>();
+ foreach (var t in all)
+ {
+ if (!MatchesSearch(t.Name, t.Effect)) continue;
+ cards.Add(new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost}", Body = t.Effect });
+ }
+
+ if (selectedSchool == "All")
+ {
+ foreach (var kv in doc.TricksBySchool ?? new Dictionary<string, List<Trick>>())
+ {
+ foreach (var t in kv.Value)
+ {
+ if (!MatchesSearch(t.Name, t.Effect)) continue;
+ cards.Add(new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost} — {kv.Key}", Body = t.Effect });
+ }
+ }
+ }
+ else
+ {
+ if (doc.TricksBySchool != null && doc.TricksBySchool.TryGetValue(selectedSchool, out var list))
+ {
+ foreach (var t in list)
+ {
+ if (!MatchesSearch(t.Name, t.Effect)) continue;
+ cards.Add(new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost} — {selectedSchool}", Body = t.Effect });
+ }
+ }
+ }
+ }
+ else // Spells
+ {
+ // include general_spells always
+ foreach (var s in doc.GeneralSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — {s.Requirements}", Body = $"Range: {s.Range} • Duration: {s.Duration}\n{s.Effect}", IsSpell = true, Spell = s });
+ }
+
+ if (selectedSchool == "All")
+ {
+ foreach (var s in doc.AnimismSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism", Body = s.Effect, IsSpell = true, Spell = s });
+ }
+ foreach (var s in doc.ElementalismSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism", Body = s.Effect, IsSpell = true, Spell = s });
+ }
+ foreach (var s in doc.MentalismSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism", Body = s.Effect, IsSpell = true, Spell = s });
+ }
+ }
+ else if (selectedSchool == "Animism")
+ {
+ foreach (var s in doc.AnimismSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism", Body = s.Effect, IsSpell = true, Spell = s });
+ }
+ }
+ else if (selectedSchool == "Elementalism")
+ {
+ foreach (var s in doc.ElementalismSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism", Body = s.Effect, IsSpell = true, Spell = s });
+ }
+ }
+ else if (selectedSchool == "Mentalism")
+ {
+ foreach (var s in doc.MentalismSpells ?? new List<Spell>())
+ {
+ if (!MatchesSearch(s.Name, s.Effect)) continue;
+ cards.Add(new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism", Body = s.Effect, IsSpell = true, Spell = s });
+ }
+ }
+ }
+
+ // apply search filter already done per-item
+ return cards;
+ }
+ }
+
+ protected override async Task OnInitializedAsync()
+ {
+ try
+ {
+ await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/spells.json");
+ var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+ doc = await JsonSerializer.DeserializeAsync<SpellsDoc>(stream, options);
+ }
+ catch (Exception ex)
+ {
+ doc = new SpellsDoc();
+ // add an error card
+ doc.GeneralSpells = new List<Spell> { new Spell { Name = "Error loading spells", Rank = "-", Requirements = "-", Range = "-", Duration = "-", Effect = ex.Message } };
+ }
+ }
+
+ private bool MatchesSearch(string? name, string? body)
+ {
+ if (string.IsNullOrWhiteSpace(searchTerm)) return true;
+ return (name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || (body ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+ }
+
+ private void OpenModal(CardView card, bool isSpell)
+ {
+ modalCard = card;
+ showModal = true;
+ selectedPowerLevel =1;
+ modalCard.IsSpell = isSpell;
+ }
+
+ private void CloseModal()
+ {
+ showModal = false;
+ modalCard = null;
+ }
+
+ private string GetScaledEffect(CardView card, int powerLevel)
+ {
+ // Simple heuristic scaling: if the effect text mentions "increases the number of dice" or "Each additional power level",
+ // try to find the first dice expression like2D6 and add (powerLevel-1) dice when appropriate.
+ var text = card.Body ?? string.Empty;
+ try
+ {
+ if (powerLevel <=1) return text;
+
+ var lower = text.ToLowerInvariant();
+ var increasesNumberOfDice = lower.Contains("increases the number of dice") || lower.Contains("number of dice rolled") || lower.Contains("each additional power level increases the number of dice") || lower.Contains("each power level beyond the first increases the number of dice");
+ var increasesDamageByDie = Regex.Match(lower, "increases the damage by d(\\d+)");
+
+ // match first NdM pattern
+ var m = Regex.Match(text, "(\\d+)D(\\d+)", RegexOptions.IgnoreCase);
+ if (m.Success)
+ {
+ int baseCount = int.Parse(m.Groups[1].Value);
+ int dieSize = int.Parse(m.Groups[2].Value);
+
+ if (increasesNumberOfDice)
+ {
+ int newCount = baseCount + (powerLevel -1);
+ return Regex.Replace(text, "(\\d+)D(\\d+)", $"{newCount}D{dieSize}");
+ }
+
+ if (increasesDamageByDie.Success)
+ {
+ int incDie = int.Parse(increasesDamageByDie.Groups[1].Value);
+ // return a combined damage description: base + (powerLevel-1) * incDie
+ return text + $"\n\nScaled damage: {baseCount}D{dieSize} + {powerLevel -1}D{incDie} (for power level {powerLevel})";
+ }
+ }
+
+ // fallback: if mentions "increases the damage by dX", show that
+ if (increasesDamageByDie.Success)
+ {
+ int incDie = int.Parse(increasesDamageByDie.Groups[1].Value);
+ return text + $"\n\nScaled increase: +{powerLevel -1}D{incDie} (for power level {powerLevel})";
+ }
+
+ // default: just show the effect and selected power level
+ return text;
+ }
+ catch
+ {
+ return text;
+ }
+ }
+
+ private class CardView
+ {
+ public string? Title { get; set; }
+ public string? Subtitle { get; set; }
+ public string? Body { get; set; }
+ public bool IsSpell { get; set; }
+ public Spell? Spell { get; set; }
+ }
+
+ private class SpellsDoc
+ {
+ [JsonPropertyName("tricks_all_schools")]
+ public List<Trick>? TricksAllSchools { get; set; }
+
+ [JsonPropertyName("tricks_by_school")]
+ public Dictionary<string, List<Trick>>? TricksBySchool { get; set; }
+
+ [JsonPropertyName("general_spells")]
+ public List<Spell>? GeneralSpells { get; set; }
+
+ [JsonPropertyName("animism_spells")]
+ public List<Spell>? AnimismSpells { get; set; }
+
+ [JsonPropertyName("elementalism_spells")]
+ public List<Spell>? ElementalismSpells { get; set; }
+
+ [JsonPropertyName("mentalism_spells")]
+ public List<Spell>? MentalismSpells { get; set; }
+ }
+
+ private class Trick
+ {
+ [JsonPropertyName("name")]
+ public string? Name { get; set; }
+ [JsonPropertyName("wp_cost")]
+ public int? WpCost { get; set; }
+ [JsonPropertyName("effect")]
+ public string? Effect { get; set; }
+ }
+
+ private class Spell
+ {
+ [JsonPropertyName("name")]
+ public string? Name { get; set; }
+ [JsonPropertyName("rank")]
+ public string? Rank { get; set; }
+ [JsonPropertyName("requirements")]
+ public string? Requirements { get; set; }
+ [JsonPropertyName("cast_time")]
+ public string? CastTime { get; set; }
+ [JsonPropertyName("range")]
+ public string? Range { get; set; }
+ [JsonPropertyName("duration")]
+ public string? Duration { get; set; }
+ [JsonPropertyName("effect")]
+ public string? Effect { get; set; }
+ }
+}
