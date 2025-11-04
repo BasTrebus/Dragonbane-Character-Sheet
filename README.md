@@ -1,20 +1,23 @@
 # DragonbaneCharacterSheetGenerator
 
-This is a project to create a (primarily) Windows app to fill in a fillable PDF for the Dragonbane TTRPG.
+This is a project to create an app to act as a character sheet for the Dragonbane TTRPG.
 
-The intended functionality is that you get to select things like Kin, Profession, ect. en to have the information automatically filled in the sheet.
-I intend to use a third-party sheet, which can also hold the information on Heroic abilities, spells. These descriptions will not be provided by the application, they need to be inserted using a Json file. 
+The intended functionality is that you get to select things like Kin, Profession, ect. en to have the information automatically filled in the app.
+Also it will hold the information on Heroic abilities and spells. 
+An additional feature I'd like to add is a PDF export, here I intend to use a third-party sheet, which can also hold the information on Heroic abilities, spells. 
+These descriptions will not be provided by the application, they need to be inserted using a Json file. 
 
 The stats are to be filled, not rolled.
 Maybe a later itteration will also have this functionallity.
+Other later additions I'd like to add are Dice rollers, with bane/boon, animations for dragon and demon rolls, automatic willpower point managemen whrn using spells or abilities.
 
-The primary function is for my own players, to get a good, readable sheet with as much info as possible.
+The primary function is for my own players, to get a usabale app and a readable sheet with as much info as possible.
 
 ---
 
 🐉 About This Project
 
-This is an open source tool designed to make playing Dragonbane easier and more fun. It helps with things like character management, dice rolling, and encounter tracking.  
+This is an open source tool designed to make playing Dragonbane easier and more fun. It helps with things like character management and dice rolling.  
 
 ⚠️ Important Notes
 - This project is not official and is not affiliated with Free League Publishing.  
