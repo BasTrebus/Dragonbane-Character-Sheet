@@ -9,7 +9,17 @@
 
         <p>This page shows the list of heroic abilities.</p>
 
-        <input class="form-control" placeholder="Search abilities by name or skill..." @bind="searchTerm" />
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <input class="form-control" placeholder="Search abilities by name or skill..." @bind="searchTerm" />
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="haFavOnly" @bind="showFavoritesOnly" />
+                    <label class="form-check-label small text-muted" for="haFavOnly">Favorites only (@CountFavoritesForKind("heroic"))</label>
+                </div>
+            </div>
+        </div>
 
         @if (abilities == null)
         {
@@ -20,10 +30,16 @@
             <div class="row mt-3">
                 @foreach (var ability in FilteredAbilities)
                 {
+                    var isFav = IsFavoriteHeroic(ability.Name);
                     <div class="col-md-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">@ability.Name <small class="text-muted">(WP: @ability.WPDisplay)</small></h5>
+                        <div class="card h-100 @(isFav ? "border-warning" : "")">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title d-flex align-items-center">
+                                    <span class="flex-grow-1">@ability.Name <small class="text-muted">(WP: @ability.WPDisplay)</small></span>
+                                    <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteHeroic(ability.Name)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                        <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                    </button>
+                                </h5>
                                 @if (!string.IsNullOrWhiteSpace(ability.Skill))
                                 {
                                     <h6 class="card-subtitle mb-2 text-muted">Skill: @ability.Skill (@ability.SkillMinDisplay)</h6>
@@ -52,13 +68,37 @@
     private string? footerNote;
     private string searchTerm = string.Empty;
 
+    private HashSet<string> favorites = new();
+    private bool showFavoritesOnly = false;
+
+    private string KeyFor(string kind, string? name) => $"{kind}|{(name ?? string.Empty).Trim()}";
+    private bool IsFavorite(string kind, string? name) => favorites.Contains(KeyFor(kind, name));
+    private void ToggleFavorite(string kind, string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return;
+        var k = KeyFor(kind, name);
+        if (favorites.Contains(k)) favorites.Remove(k); else favorites.Add(k);
+        Preferences.Set("favorites", JsonSerializer.Serialize(favorites));
+        StateHasChanged();
+    }
+    private void LoadFavorites()
+    {
+        try
+        {
+            var json = Preferences.Get("favorites", "[]");
+            favorites = JsonSerializer.Deserialize<HashSet<string>>(json) ?? new HashSet<string>();
+        }
+        catch { favorites = new HashSet<string>(); }
+    }
+
     private IEnumerable<HeroicAbility> FilteredAbilities =>
-        string.IsNullOrWhiteSpace(searchTerm)
-            ? abilities ?? Enumerable.Empty<HeroicAbility>()
-            : (abilities ?? Enumerable.Empty<HeroicAbility>()).Where(a =>
-                (a.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                (a.Skill ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                (a.Description ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+        (abilities ?? Enumerable.Empty<HeroicAbility>())
+            .Where(a =>
+                (string.IsNullOrWhiteSpace(searchTerm) ||
+                    (a.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    (a.Skill ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    (a.Description ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                && (!showFavoritesOnly || IsFavorite("heroic", a.Name))
             );
 
     protected override async Task OnInitializedAsync()
@@ -78,6 +118,8 @@
             abilities = new List<HeroicAbility>();
             footerNote = $"Error loading abilities: {ex.GetType().Name}: {ex.Message}";
         }
+
+        LoadFavorites();
     }
 
     private class HeroicAbilitiesDoc
@@ -120,5 +162,14 @@
         }
 
         public string SkillMinDisplay => SkillMin?.ToString() ?? "-";
+    }
+
+    private void ToggleFavoriteHeroic(string? name) => ToggleFavorite("heroic", name);
+    private bool IsFavoriteHeroic(string? name) => IsFavorite("heroic", name);
+
+    private int CountFavoritesForKind(string kind)
+    {
+        if (favorites == null || favorites.Count == 0) return 0;
+        return favorites.Count(f => f != null && f.StartsWith($"{kind}|", StringComparison.OrdinalIgnoreCase));
     }
 }

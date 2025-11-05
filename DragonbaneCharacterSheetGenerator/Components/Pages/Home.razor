@@ -1,5 +1,41 @@
 ﻿@page "/"
 
+@using System.Text.Json
+@using Microsoft.Maui.Storage
+
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<div class="mt-3">
+    <button class="btn btn-danger" @onclick="ClearFavoritesConfirmed">Clear all favorites</button>
+    <span class="ms-2 text-muted">(@CountFavorites() favorites)</span>
+</div>
+
+@if (showClearedMessage)
+{
+    <div class="alert alert-success mt-3">Favorites cleared.</div>
+}
+
+@code {
+    private bool showClearedMessage;
+
+    private void ClearFavoritesConfirmed()
+    {
+        // remove all favorites key
+        Preferences.Set("favorites", JsonSerializer.Serialize(new string[] { }));
+        showClearedMessage = true;
+        StateHasChanged();
+    }
+
+    private int CountFavorites()
+    {
+        try
+        {
+            var json = Preferences.Get("favorites", "[]");
+            var set = JsonSerializer.Deserialize<HashSet<string>>(json);
+            return set?.Count ?? 0;
+        }
+        catch { return 0; }
+    }
+}
