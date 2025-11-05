@@ -59,7 +59,9 @@
                                 <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, false)">
                                     <h5 class="card-title d-flex align-items-center">
                                         <span class="flex-grow-1">@card.Title</span>
-                                        <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(card.IsSpell, card.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                        <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                            <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                        </button>
                                     </h5>
                                     <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
                                     <p class="card-text">@card.Body</p>
@@ -78,7 +80,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.GeneralSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank}", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -86,7 +88,9 @@
                                     <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
                                         <h5 class="card-title d-flex align-items-center">
                                             <span class="flex-grow-1">@card.Title</span>
-                                            <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(card.IsSpell, card.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                            <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                                <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                            </button>
                                         </h5>
                                         <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
                                         <p class="card-text">@card.Body</p>
@@ -100,7 +104,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.AnimismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -108,7 +112,9 @@
                                     <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
                                         <h5 class="card-title d-flex align-items-center">
                                             <span class="flex-grow-1">@card.Title</span>
-                                            <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(card.IsSpell, card.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                            <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                                <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                            </button>
                                         </h5>
                                         <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
                                         <p class="card-text">@card.Body</p>
@@ -122,7 +128,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.ElementalismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -130,7 +136,9 @@
                                     <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
                                         <h5 class="card-title d-flex align-items-center">
                                             <span class="flex-grow-1">@card.Title</span>
-                                            <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(card.IsSpell, card.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                            <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                                <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                            </button>
                                         </h5>
                                         <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
                                         <p class="card-text">@card.Body</p>
@@ -144,7 +152,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.MentalismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -152,7 +160,9 @@
                                     <div class="card-body" style="cursor:pointer;" @onclick="() => OpenModal(card, true)">
                                         <h5 class="card-title d-flex align-items-center">
                                             <span class="flex-grow-1">@card.Title</span>
-                                            <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(card.IsSpell, card.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                            <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                                <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                            </button>
                                         </h5>
                                         <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
                                         <p class="card-text">@card.Body</p>
@@ -175,7 +185,9 @@
                                             <span class="flex-grow-1">@card.Title</span>
                                             @if (card.IsSpell)
                                             {
-                                                <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(card.IsSpell, card.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                                <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(card.IsSpell, card.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                                    <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                                </button>
                                             }
                                         </h5>
                                         <h6 class="card-subtitle mb-2 text-muted">@card.Subtitle</h6>
@@ -197,7 +209,9 @@
                             <div class="modal-header">
                                 <h5 class="modal-title d-flex align-items-center">
                                     <span class="flex-grow-1">@modalCard.Title</span>
-                                    <button class="btn btn-link p-0 ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(modalCard.IsSpell, modalCard.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true">@((IsFavoriteItem(modalCard.IsSpell, modalCard.Title)) ? (MarkupString)"&#9733;" : (MarkupString)"&#9734;")</button>
+                                    <button class="fav-btn @(IsFavoriteItem(modalCard.IsSpell, modalCard.Title) ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteItem(modalCard.IsSpell, modalCard.Title)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                        <i class="@(IsFavoriteItem(modalCard.IsSpell, modalCard.Title) ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
+                                    </button>
                                 </h5>
                                 <button type="button" class="btn-close" @onclick="CloseModal"></button>
                             </div>
@@ -309,7 +323,7 @@
 
     private void OpenPrereqBySpell(Spell s)
     {
-        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank}", Body = s.Effect, IsSpell = true, Spell = s };
         modalCard = card;
         showModal = true;
     }
