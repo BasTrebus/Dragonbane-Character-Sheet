@@ -28,7 +28,17 @@
                     <option value="Mentalism">Mentalism</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
+                <label class="form-label">Max Rank</label>
+                <select class="form-select" @bind="selectedMaxRank">
+                    <option value="Any">Any</option>
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label">Search</label>
                 <input class="form-control" placeholder="Search by name or effect..." @bind="searchTerm" />
             </div>
@@ -279,6 +289,7 @@
     private string selectedType = "Tricks";
     private string selectedSchool = "All";
     private string searchTerm = string.Empty;
+    private string selectedMaxRank = "Any";
 
     private bool showModal;
     private CardView? modalCard;
@@ -346,6 +357,9 @@
 
             var cards = new List<CardView>();
 
+            // parse selected max rank once
+            int? maxRank = int.TryParse(selectedMaxRank, out var tmp) ? tmp : (int?)null;
+
             if (selectedType == "Tricks")
             {
                 var all = doc.Tricks?.GeneralTricks ?? new List<Trick>();
@@ -405,6 +419,10 @@
                 foreach (var s in doc.Spells?.GeneralSpells ?? new List<Spell>())
                 {
                     if (!MatchesSearch(s.Name, s.Effect)) continue;
+
+                    // apply max rank filter: if user specified a maxRank and the spell's rank is numeric and higher, skip
+                    if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
+
                     var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                     if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                 }
@@ -414,18 +432,21 @@
                     foreach (var s in doc.Spells?.AnimismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
+                        if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
                         var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                     foreach (var s in doc.Spells?.ElementalismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
+                        if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
                         var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                     foreach (var s in doc.Spells?.MentalismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
+                        if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
                         var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
@@ -435,6 +456,7 @@
                     foreach (var s in doc.Spells?.AnimismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
+                        if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
                         var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
@@ -444,6 +466,7 @@
                     foreach (var s in doc.Spells?.ElementalismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
+                        if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
                         var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
@@ -453,6 +476,7 @@
                     foreach (var s in doc.Spells?.MentalismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
+                        if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
                         var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
