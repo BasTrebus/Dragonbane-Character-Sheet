@@ -7,7 +7,7 @@
 
 @inherits DragonbaneCharacterSheetGenerator.Components.Pages.InnateAbilitiesBase
 
-<ErrorBoundary>
+<ErrorBoundary Context="err">
     <ChildContent>
         <h1>Innate Abilities</h1>
 
@@ -67,119 +67,4 @@
     </ErrorContent>
 </ErrorBoundary>
 
-@code {
-    private List<InnateAbility>? abilities;
-    private string searchTerm = string.Empty;
-
-    private IEnumerable<InnateAbility> FilteredAbilities =>
-        (abilities ?? Enumerable.Empty<InnateAbility>())
-            .Where(a =>
-                (string.IsNullOrWhiteSpace(searchTerm) ||
-                    (a.Kin ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (a.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (a.Description ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                && (!showFavoritesOnly || IsFavorite("innate", a.Name))
-            );
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/innateAbilities.json");
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var kinList = await JsonSerializer.DeserializeAsync<List<KinEntry>>(stream, options);
-
-            abilities = kinList?.SelectMany(k => (k.Abilities ?? new List<InnateAbilitySource>()).Select(a => new InnateAbility
-            {
-                Kin = k.Kin,
-                Name = a.Name,
-                Wp = a.Wp,
-                Description = a.Description
-            })).ToList() ?? new List<InnateAbility>();
-        }
-        catch (Exception ex)
-        {
-            abilities = new List<InnateAbility>();
-            abilities.Add(new InnateAbility { Kin = "Error", Name = "Failed to load", Description = ex.Message, Wp = new JsonElement() });
-        }
-
-        LoadFavorites();
-    }
-
-    private HashSet<string> favorites = new();
-    private bool showFavoritesOnly = false;
-
-    private string KeyFor(string kind, string? name) => $"{kind}|{(name ?? string.Empty).Trim()}";
-    private bool IsFavorite(string kind, string? name) => favorites.Contains(KeyFor(kind, name));
-    private void ToggleFavorite(string kind, string? name)
-    {
-        if (string.IsNullOrWhiteSpace(name)) return;
-        var k = KeyFor(kind, name);
-        if (favorites.Contains(k)) favorites.Remove(k); else favorites.Add(k);
-        Preferences.Set("favorites", JsonSerializer.Serialize(favorites));
-        StateHasChanged();
-    }
-    private void LoadFavorites()
-    {
-        try
-        {
-            var json = Preferences.Get("favorites", "[]");
-            favorites = JsonSerializer.Deserialize<HashSet<string>>(json) ?? new HashSet<string>();
-        }
-        catch { favorites = new HashSet<string>(); }
-    }
-
-    private void ToggleFavoriteInnate(string? name) => ToggleFavorite("innate", name);
-    private bool IsFavoriteInnate(string? name) => IsFavorite("innate", name);
-
-    private int CountFavoritesForKind(string kind)
-    {
-        if (favorites == null || favorites.Count == 0) return 0;
-        return favorites.Count(f => f != null && f.StartsWith($"{kind}|", StringComparison.OrdinalIgnoreCase));
-    }
-
-    private class KinEntry
-    {
-        [JsonPropertyName("kin")]
-        public string? Kin { get; set; }
-        [JsonPropertyName("abilities")]
-        public List<InnateAbilitySource>? Abilities { get; set; }
-    }
-
-    private class InnateAbilitySource
-    {
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
-        [JsonPropertyName("wp")]
-        public JsonElement Wp { get; set; }
-        [JsonPropertyName("description")]
-        public string? Description { get; set; }
-    }
-
-    private class InnateAbility
-    {
-        public string? Kin { get; set; }
-        public string? Name { get; set; }
-        public JsonElement Wp { get; set; }
-        public string? Description { get; set; }
-
-        public string WPDisplay
-        {
-            get
-            {
-                try
-                {
-                    if (Wp.ValueKind == JsonValueKind.Undefined || Wp.ValueKind == JsonValueKind.Null)
-                        return "-";
-                    if (Wp.ValueKind == JsonValueKind.Number && Wp.TryGetInt32(out var n))
-                        return n.ToString();
-                    if (Wp.ValueKind == JsonValueKind.String)
-                        return Wp.GetString() ?? "-";
-                }
-                catch { }
-                return Wp.ToString() ?? "-";
-            }
-        }
-    }
-}
 @* Component logic moved into InnateAbilitiesBase (InnateAbilities.razor.cs). *@
