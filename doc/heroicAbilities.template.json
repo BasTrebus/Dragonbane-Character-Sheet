@@ -1,0 +1,12 @@
+{
+  "abilities": [
+    {
+      "name": "Example Heroic Ability",
+      "wp": 3,
+      "skill": "Athletics",
+      "skill_min": 12,
+      "description": "Describe the heroic ability here. Replace with real content."
+    }
+  ],
+  "footer_note": "Template file — replace entries with your own content. Do not commit copyrighted content you do not own."
+}

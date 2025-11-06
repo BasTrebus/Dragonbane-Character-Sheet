@@ -2,6 +2,7 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Microsoft.Maui.Storage
+@using System.IO
 
 <ErrorBoundary Context="err">
     <ChildContent>
@@ -105,13 +106,27 @@
     {
         try
         {
-            // Load the JSON from the app package (wwwroot is packaged with the app)
-            await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/heroicAbilities.json");
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var doc = await JsonSerializer.DeserializeAsync<HeroicAbilitiesDoc>(stream, options);
+            // Prefer override in AppData/doc if present
+            var overridePath = Path.Combine(FileSystem.AppDataDirectory, "doc", "heroicAbilities.json");
+            if (File.Exists(overridePath))
+            {
+                await using var stream = File.OpenRead(overridePath);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var doc = await JsonSerializer.DeserializeAsync<HeroicAbilitiesDoc>(stream, options);
 
-            abilities = doc?.Abilities ?? new List<HeroicAbility>();
-            footerNote = doc?.FooterNote ?? string.Empty;
+                abilities = doc?.Abilities ?? new List<HeroicAbility>();
+                footerNote = doc?.FooterNote ?? string.Empty;
+            }
+            else
+            {
+                // Load the JSON from the app package (wwwroot is packaged with the app)
+                await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/heroicAbilities.json");
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var doc = await JsonSerializer.DeserializeAsync<HeroicAbilitiesDoc>(stream, options);
+
+                abilities = doc?.Abilities ?? new List<HeroicAbility>();
+                footerNote = doc?.FooterNote ?? string.Empty;
+            }
         }
         catch (Exception ex)
         {

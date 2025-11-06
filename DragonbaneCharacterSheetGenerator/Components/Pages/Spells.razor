@@ -2,6 +2,7 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Microsoft.Maui.Storage
+@using System.IO
 @using System.Text.RegularExpressions
 @using System.Linq
 
@@ -114,7 +115,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.AnimismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Animism", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -138,7 +139,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.ElementalismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Elementalism", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -162,7 +163,7 @@
                     <div class="row">
                         @foreach (var s in (doc.Spells?.MentalismSpells ?? Enumerable.Empty<Spell>()).Where(s => MatchesSearch(s.Name, s.Effect)))
                         {
-                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism", Body = s.Effect, IsSpell = true, Spell = s };
+                            var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Mentalism", Body = s.Effect, IsSpell = true, Spell = s };
                             if (showFavoritesOnly && !IsFavorite("spell", card.Title)) continue;
                             var isFav = IsFavoriteItem(card.IsSpell, card.Title);
                             <div class="col-md-6 mb-3">
@@ -386,7 +387,7 @@
                         foreach (var t in kv.Value)
                         {
                             if (!MatchesSearch(t.Name, t.Effect)) continue;
-                            var card = new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost} — {kv.Key}", Body = t.Effect };
+                            var card = new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost} ï¿½ {kv.Key}", Body = t.Effect };
                             if (showFavoritesOnly && !IsFavorite("trick", card.Title)) continue;
                             cards.Add(card);
                         }
@@ -406,7 +407,7 @@
                         foreach (var t in list)
                         {
                             if (!MatchesSearch(t.Name, t.Effect)) continue;
-                            var card = new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost} — {selectedSchool}", Body = t.Effect };
+                            var card = new CardView { Title = t.Name, Subtitle = $"WP: {t.WpCost} ï¿½ {selectedSchool}", Body = t.Effect };
                             if (showFavoritesOnly && !IsFavorite("trick", card.Title)) continue;
                             cards.Add(card);
                         }
@@ -423,7 +424,7 @@
                     // apply max rank filter: if user specified a maxRank and the spell's rank is numeric and higher, skip
                     if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
 
-                    var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                    var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                     if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                 }
 
@@ -433,21 +434,21 @@
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
                         if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
-                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Animism ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                     foreach (var s in doc.Spells?.ElementalismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
                         if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
-                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Elementalism ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                     foreach (var s in doc.Spells?.MentalismSpells ?? new List<Spell>())
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
                         if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
-                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Mentalism ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                 }
@@ -457,7 +458,7 @@
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
                         if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
-                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Animism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Animism ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                 }
@@ -467,7 +468,7 @@
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
                         if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
-                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Elementalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Elementalism ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                 }
@@ -477,7 +478,7 @@
                     {
                         if (!MatchesSearch(s.Name, s.Effect)) continue;
                         if (maxRank.HasValue && int.TryParse(s.Rank?.Trim(), out var rVal) && rVal > maxRank.Value) continue;
-                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} — Mentalism — {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
+                        var card = new CardView { Title = s.Name, Subtitle = $"Rank: {s.Rank} ï¿½ Mentalism ï¿½ {ExpandRequirements(s.Requirements)}", Body = s.Effect, IsSpell = true, Spell = s };
                         if (!showFavoritesOnly || IsFavorite("spell", card.Title)) cards.Add(card);
                     }
                 }
@@ -492,9 +493,20 @@
     {
         try
         {
-            await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/spells.json");
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            doc = await JsonSerializer.DeserializeAsync<SpellsDoc>(stream, options);
+            // Prefer an imported/overridden copy in AppData/doc if present
+            var overridePath = Path.Combine(FileSystem.AppDataDirectory, "doc", "spells.json");
+            if (File.Exists(overridePath))
+            {
+                await using var stream = File.OpenRead(overridePath);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                doc = await JsonSerializer.DeserializeAsync<SpellsDoc>(stream, options);
+            }
+            else
+            {
+                await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/spells.json");
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                doc = await JsonSerializer.DeserializeAsync<SpellsDoc>(stream, options);
+            }
         }
         catch (Exception ex)
         {
