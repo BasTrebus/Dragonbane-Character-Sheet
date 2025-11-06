@@ -1,12 +1,12 @@
 [
-  {
-    "kin": "Example Kin",
-    "abilities": [
-      {
-        "name": "Example Innate Ability",
-        "wp": 2,
-        "description": "Describe the innate ability here. Replace with your own content."
-      }
-    ]
-  }
+    {
+        "kin": "Example Kin",
+        "abilities": [
+            {
+                "name": "Example Innate Ability",
+                "wp": 2,
+                "description": "Describe the innate ability here. Replace with your own content."
+            }
+        ]
+    }
 ]

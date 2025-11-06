@@ -30,13 +30,13 @@ namespace DragonbaneCharacterSheetGenerator.Services
                 using var source = await result.OpenReadAsync();
 
                 // Try a few likely base directories so this works in the dev environment.
-                string[] candidates = new[] {
+                string?[] candidates = new[] {
                     Directory.GetCurrentDirectory(),
                     AppContext.BaseDirectory,
                     Environment.CurrentDirectory
                 };
 
-                string destDir = null;
+                string? destDir = null;
                 foreach (var c in candidates)
                 {
                     if (c == null) continue;

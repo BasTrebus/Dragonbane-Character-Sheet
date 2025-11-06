@@ -3,6 +3,8 @@
 @using System.Text.Json.Serialization
 @using Microsoft.Maui.Storage
 @using System.IO
+@using DragonbaneCharacterSheetGenerator.Shared
+@inherits DragonbaneCharacterSheetGenerator.Components.Pages.HeroicAbilitiesBase
 
 <ErrorBoundary Context="err">
     <ChildContent>
@@ -64,127 +66,4 @@
     </ErrorContent>
 </ErrorBoundary>
 
-@code {
-    private List<HeroicAbility>? abilities;
-    private string? footerNote;
-    private string searchTerm = string.Empty;
 
-    private HashSet<string> favorites = new();
-    private bool showFavoritesOnly = false;
-
-    private string KeyFor(string kind, string? name) => $"{kind}|{(name ?? string.Empty).Trim()}";
-    private bool IsFavorite(string kind, string? name) => favorites.Contains(KeyFor(kind, name));
-    private void ToggleFavorite(string kind, string? name)
-    {
-        if (string.IsNullOrWhiteSpace(name)) return;
-        var k = KeyFor(kind, name);
-        if (favorites.Contains(k)) favorites.Remove(k); else favorites.Add(k);
-        Preferences.Set("favorites", JsonSerializer.Serialize(favorites));
-        StateHasChanged();
-    }
-    private void LoadFavorites()
-    {
-        try
-        {
-            var json = Preferences.Get("favorites", "[]");
-            favorites = JsonSerializer.Deserialize<HashSet<string>>(json) ?? new HashSet<string>();
-        }
-        catch { favorites = new HashSet<string>(); }
-    }
-
-    private IEnumerable<HeroicAbility> FilteredAbilities =>
-        (abilities ?? Enumerable.Empty<HeroicAbility>())
-            .Where(a =>
-                (string.IsNullOrWhiteSpace(searchTerm) ||
-                    (a.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (a.Skill ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (a.Description ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                && (!showFavoritesOnly || IsFavorite("heroic", a.Name))
-            );
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            // Prefer override in AppData/doc if present
-            var overridePath = Path.Combine(FileSystem.AppDataDirectory, "doc", "heroicAbilities.json");
-            if (File.Exists(overridePath))
-            {
-                await using var stream = File.OpenRead(overridePath);
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var doc = await JsonSerializer.DeserializeAsync<HeroicAbilitiesDoc>(stream, options);
-
-                abilities = doc?.Abilities ?? new List<HeroicAbility>();
-                footerNote = doc?.FooterNote ?? string.Empty;
-            }
-            else
-            {
-                // Load the JSON from the app package (wwwroot is packaged with the app)
-                await using var stream = await FileSystem.OpenAppPackageFileAsync("wwwroot/doc/heroicAbilities.json");
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var doc = await JsonSerializer.DeserializeAsync<HeroicAbilitiesDoc>(stream, options);
-
-                abilities = doc?.Abilities ?? new List<HeroicAbility>();
-                footerNote = doc?.FooterNote ?? string.Empty;
-            }
-        }
-        catch (Exception ex)
-        {
-            abilities = new List<HeroicAbility>();
-            footerNote = $"Error loading abilities: {ex.GetType().Name}: {ex.Message}";
-        }
-
-        LoadFavorites();
-    }
-
-    private class HeroicAbilitiesDoc
-    {
-        [JsonPropertyName("abilities")]
-        public List<HeroicAbility>? Abilities { get; set; }
-        [JsonPropertyName("footer_note")]
-        public string? FooterNote { get; set; }
-    }
-
-    private class HeroicAbility
-    {
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
-
-        [JsonPropertyName("wp")]
-        public JsonElement Wp { get; set; }
-
-        [JsonPropertyName("skill")]
-        public string? Skill { get; set; }
-
-        [JsonPropertyName("skill_min")]
-        public int? SkillMin { get; set; }
-
-        [JsonPropertyName("description")]
-        public string? Description { get; set; }
-
-        public string WPDisplay
-        {
-            get
-            {
-                if (Wp.ValueKind == JsonValueKind.Undefined || Wp.ValueKind == JsonValueKind.Null)
-                    return "-";
-                if (Wp.ValueKind == JsonValueKind.Number && Wp.TryGetInt32(out var n))
-                    return n.ToString();
-                if (Wp.ValueKind == JsonValueKind.String)
-                    return Wp.GetString() ?? "-";
-                return Wp.ToString();
-            }
-        }
-
-        public string SkillMinDisplay => SkillMin?.ToString() ?? "-";
-    }
-
-    private void ToggleFavoriteHeroic(string? name) => ToggleFavorite("heroic", name);
-    private bool IsFavoriteHeroic(string? name) => IsFavorite("heroic", name);
-
-    private int CountFavoritesForKind(string kind)
-    {
-        if (favorites == null || favorites.Count == 0) return 0;
-        return favorites.Count(f => f != null && f.StartsWith($"{kind}|", StringComparison.OrdinalIgnoreCase));
-    }
-}

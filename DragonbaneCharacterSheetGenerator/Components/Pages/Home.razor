@@ -45,7 +45,7 @@ Welcome to your new app.
     }
 
     [Microsoft.AspNetCore.Components.Inject]
-    private DragonbaneCharacterSheetGenerator.Services.ILocalDocService LocalDocService { get; set; }
+    private DragonbaneCharacterSheetGenerator.Services.ILocalDocService LocalDocService { get; set; } = default!;
 
     private string importMessage = string.Empty;
 

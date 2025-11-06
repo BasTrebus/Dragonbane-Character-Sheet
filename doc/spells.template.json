@@ -1,32 +1,32 @@
 {
-  "tricks": {
-    "general_tricks": [
-      {
-        "name": "Example Trick",
-        "effect": "Effect text here."
-      }
-    ],
-    "Animism": [],
-    "Elementalism": [],
-    "Mentalism": []
-  },
-  "spells": {
-    "general_spells": [
-      {
-        "name": "Example Spell",
-        "rank": "1",
-        "requirements": "W",
-        "cast_time": "Action",
-        "range": "Touch",
-        "duration": "Instant",
-        "effect": "Effect text here.",
-        "prerequisite": ""
-      }
-    ],
-    "animism_spells": [],
-    "elementalism_spells": [],
-    "mentalism_spells": []
-  },
-  "notes": "Template file — replace entries with your own spells. Do not commit copyrighted content you do not own.",
-  "version": "1.0"
+    "tricks": {
+        "general_tricks": [
+            {
+                "name": "Example Trick",
+                "effect": "Effect text here."
+            }
+        ],
+        "Animism": [],
+        "Elementalism": [],
+        "Mentalism": []
+    },
+    "spells": {
+        "general_spells": [
+            {
+                "name": "Example Spell",
+                "rank": "1",
+                "requirements": "W",
+                "cast_time": "Action",
+                "range": "Touch",
+                "duration": "Instant",
+                "effect": "Effect text here.",
+                "prerequisite": ""
+            }
+        ],
+        "animism_spells": [],
+        "elementalism_spells": [],
+        "mentalism_spells": []
+    },
+    "notes": "Template file — replace entries with your own spells. Do not commit copyrighted content you do not own.",
+    "version": "1.0"
 }
