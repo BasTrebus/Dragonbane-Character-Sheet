@@ -26,6 +26,22 @@
     </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script src="js/theme.js"></script>
+
+    <script>
+        // apply persisted or preferred theme early
+        try {
+            (function () {
+                var pref = null;
+                try { pref = window.localStorage && window.localStorage.getItem && window.localStorage.getItem('theme'); } catch (e) { }
+                if (pref) {
+                    window.themeInterop.applyTheme(pref);
+                } else {
+                    window.themeInterop.applyTheme(window.themeInterop.getPreferredScheme());
+                }
+            })();
+        } catch (e) { }
+    </script>
 
 </body>
 

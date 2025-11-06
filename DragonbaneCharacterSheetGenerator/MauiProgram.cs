@@ -29,6 +29,9 @@ namespace DragonbaneCharacterSheetGenerator
             // Local file import service for adding JSON docs at runtime
             builder.Services.AddSingleton<Services.ILocalDocService, Services.LocalDocService>();
 
+            // Theme service (uses JS runtime to apply theme class)
+            builder.Services.AddScoped<Services.IThemeService, Services.ThemeService>();
+
             return builder.Build();
         }
     }
