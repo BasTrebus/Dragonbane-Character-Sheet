@@ -1,0 +1,4 @@
+# All files owned by you — this makes you a required code owner for changes,
+# combined with a branch protection rule that requires review from code owners,
+# this will force your approval on PRs that touch the repo.
+* @BasTrebus

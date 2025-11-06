@@ -1,25 +1,26 @@
+# Contributing
 
+Thanks for wanting to contribute!
 
-🤝 Contributing Guidelines
+Key rules (enforced):
 
-Thanks for your interest in contributing! This project is open source and community-driven. To keep everything safe and respectful of Free League Publishing’s rights, please follow these rules:
+- Never commit directly to `main`. Use a feature branch and open a pull request.
+- Branch naming: use `feat/<short-desc>`, `fix/<short-desc>`, `chore/<short-desc>`, etc.
+- Open a PR targeting `main` from your feature branch and include a clear description.
+- The repository uses CODEOWNERS. PRs that change code require review/approval from the code owner(s).
+- Do not merge your own PRs unless explicitly authorised by the repository owner.
+- Keep PRs focused and small; link to issues where possible.
+- Make sure any manual steps to run the app are documented in README.
 
-✅ Do
-- Contribute code (features, bug fixes, refactoring, tests).  
-- Add generic templates (e.g., JSON structures for monsters, spells, items) without filling in copyrighted text.  
-- Write documentation that explains how to use the app, or how to extend it.  
-- Reference the Dragonbane Core Rulebook by page number or section when needed.  
-- Use the official “Third-Party Supplement” logo if appropriate, but not the Dragonbane logo.  
+Suggested workflow:
 
-🚫 Don’t
-- Copy or paste rulebook text, lore, or artwork into the repository.  
-- Upload pre-filled monster stats, spell descriptions, or adventures from the official books.  
-- Use Free League’s logos or trademarks (other than the approved third-party logo).  
-- Create a fork that tries to replace the need for the official rulebook.  
+1. Fork or branch off main in this repo.
+2. Create a feature branch: `git checkout -b feat/your-feature`.
+3. Make changes, run any local checks.
+4. Push your branch and open a PR.
+5. Request review from @BasTrebus (code owner) and address comments.
+6. Once approved and CI is green, maintainers will merge.
 
-📝 How to Contribute
-1. Fork the repo.  
-2. Create a feature branch (git checkout -b feature/amazing-idea).  
-3. Commit your changes (git commit -m 'Add amazing idea').  
-4. Push to your branch (git push origin feature/amazing-idea).  
-5. Open a Pull Request.  
+If you need help, open an issue describing the change or ping @BasTrebus.
+
+---
