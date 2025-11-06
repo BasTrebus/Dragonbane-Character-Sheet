@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignore local documentation JSON files that should not be published to GitHub
+wwwroot/doc/heroicAbilities.json
+wwwroot/doc/innateAbilities.json
+wwwroot/doc/spells.json
+
+# Also ignore any matching files under nested project folders
+**/wwwroot/doc/*.json

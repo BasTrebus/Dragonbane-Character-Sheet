@@ -1,4 +1,4 @@
-# DragonbaneCharacterSheetGenerator
+# Dragonbane Character Sheet
 
 This is a project to create an app to act as a character sheet for the Dragonbane TTRPG.
 

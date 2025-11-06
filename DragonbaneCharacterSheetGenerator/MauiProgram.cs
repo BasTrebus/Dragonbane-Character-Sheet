@@ -26,6 +26,12 @@ namespace DragonbaneCharacterSheetGenerator
             // Provide an HttpClient with a BaseAddress so relative URIs work in injected HttpClient
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost/") });
 
+            // Local file import service for adding JSON docs at runtime
+            builder.Services.AddSingleton<Services.ILocalDocService, Services.LocalDocService>();
+
+            // Theme service (uses JS runtime to apply theme class)
+            builder.Services.AddScoped<Services.IThemeService, Services.ThemeService>();
+
             return builder.Build();
         }
     }

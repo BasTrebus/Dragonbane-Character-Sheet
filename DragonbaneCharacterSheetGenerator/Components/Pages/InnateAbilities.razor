@@ -2,9 +2,12 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Microsoft.Maui.Storage
+@using System.IO
 @using System.Linq
 
-<ErrorBoundary Context="err">
+@inherits DragonbaneCharacterSheetGenerator.Components.Pages.InnateAbilitiesBase
+
+<ErrorBoundary>
     <ChildContent>
         <h1>Innate Abilities</h1>
 
@@ -12,12 +15,14 @@
 
         <div class="row mb-3">
             <div class="col-md-8">
-                <input class="form-control" placeholder="Search abilities by kin, name or description..." @bind="searchTerm" />
+                <input class="form-control" placeholder="Search abilities by kin, name or description..."
+                    @bind="searchTerm" />
             </div>
             <div class="col-md-4 d-flex align-items-end">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="iaFavOnly" @bind="showFavoritesOnly" />
-                    <label class="form-check-label small text-muted" for="iaFavOnly">Favorites only (@CountFavoritesForKind("innate"))</label>
+                    <label class="form-check-label small text-muted" for="iaFavOnly">Favorites only
+                        (@CountFavoritesForKind("innate"))</label>
                 </div>
             </div>
         </div>
@@ -36,8 +41,11 @@
                         <div class="card h-100 @(isFav ? "border-warning" : "")">
                             <div class="card-body">
                                 <h5 class="card-title d-flex align-items-center">
-                                    <span class="flex-grow-1">@ability.Name <small class="text-muted">(WP: @ability.WPDisplay)</small></span>
-                                    <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite" @onclick="() => ToggleFavoriteInnate(ability.Name)" @onclick:preventDefault="true" @onclick:stopPropagation="true" aria-label="Toggle favorite">
+                                    <span class="flex-grow-1">@ability.Name <small class="text-muted">(WP:
+                                            @ability.WPDisplay)</small></span>
+                                    <button class="fav-btn @(isFav ? "favorited" : "") ms-2" title="Toggle favorite"
+                                        @onclick="() => ToggleFavoriteInnate(ability.Name)" @onclick:preventDefault="true"
+                                        @onclick:stopPropagation="true" aria-label="Toggle favorite">
                                         <i class="@(isFav ? "fa-solid fa-star" : "fa-regular fa-star")" aria-hidden="true"></i>
                                     </button>
                                 </h5>
@@ -174,3 +182,4 @@
         }
     }
 }
+@* Component logic moved into InnateAbilitiesBase (InnateAbilities.razor.cs). *@
