@@ -3,7 +3,6 @@
     "general_tricks": [
       {
         "name": "Example Trick",
-        "wp_cost": 0,
         "effect": "Effect text here."
       }
     ],
@@ -17,7 +16,7 @@
         "name": "Example Spell",
         "rank": "1",
         "requirements": "W",
-        "cast_time": "1 action",
+        "cast_time": "Action",
         "range": "Touch",
         "duration": "Instant",
         "effect": "Effect text here.",
