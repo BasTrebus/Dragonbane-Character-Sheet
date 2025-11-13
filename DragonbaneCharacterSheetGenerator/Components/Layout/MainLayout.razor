@@ -13,7 +13,7 @@
                 <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
             </div>
             <div>
-                <button class="btn btn-outline-secondary" @onclick="ToggleTheme">Toggle theme</button>
+                <a class="btn btn-outline-secondary" href="/settings">Settings</a>
             </div>
         </div>
 
@@ -32,10 +32,5 @@
             // ensure persisted preference and apply via ThemeService (ThemeService will call JS)
             await ThemeService.SetThemeAsync(theme);
         }
-    }
-
-    private async Task ToggleTheme()
-    {
-        await ThemeService.ToggleThemeAsync();
     }
 }

@@ -1,0 +1,51 @@
+@page "/settings"
+@inject DragonbaneCharacterSheetGenerator.Services.IThemeService ThemeService
+@inject DragonbaneCharacterSheetGenerator.Services.ILocalDocService LocalDocService
+@inject DragonbaneCharacterSheetGenerator.Services.IFavoritesService FavoritesService
+
+<h1>Settings</h1>
+
+<div class="mb-3">
+    <h5>Appearance</h5>
+    <p>
+        <button class="btn btn-primary" @onclick="ToggleTheme">Toggle theme</button>
+    </p>
+</div>
+
+<div class="mb-3">
+    <h5>Data</h5>
+    <p>
+        <button class="btn btn-secondary" @onclick="ImportJson">Import JSON</button>
+    </p>
+    <p class="text-muted">You can import JSON files to be used as docs by the app. Supported files should be placed in <code>wwwroot/doc</code> or the app data folder.</p>
+</div>
+
+<div class="mb-3">
+    <h5>Favorites</h5>
+    <p>
+        <button class="btn btn-danger" @onclick="ClearFavorites">Remove all favorites</button>
+    </p>
+</div>
+
+@code {
+    private async Task ToggleTheme()
+    {
+        await ThemeService.ToggleThemeAsync();
+    }
+
+    private async Task ImportJson()
+    {
+        var (ok, msg) = await LocalDocService.ImportJsonAsync();
+        // simple feedback - replace with toast later
+        await JS.InvokeVoidAsync("alert", ok ? msg : "Import failed: " + msg);
+    }
+
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
+    private async Task ClearFavorites()
+    {
+        await FavoritesService.ClearAllAsync();
+        await JS.InvokeVoidAsync("alert", "All favorites removed.");
+    }
+}
