@@ -26,6 +26,9 @@
     <_AndroidIntermediateJavaClassDirectory>$(MSBuildProjectDirectory)\obj\$(Configuration)\net10.0-android\android\bin\classes</_AndroidIntermediateJavaClassDirectory>
     <DefaultLanguage>en-us</DefaultLanguage>
   </PropertyGroup>
+  <PropertyGroup>
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+  </PropertyGroup>
   <!-- Ensure common Android intermediate directories exist before the Android build tasks run -->
   <Target Name="EnsureAndroidJavaClassDirs" BeforeTargets="PrepareForBuild" Condition=" '$(TargetFramework)' == 'net10.0-android' Or '$(TargetFrameworks)'=='net10.0-android' Or '$(TargetFrameworks)' == '*net10.0-android*' ">
     <MakeDir Directories="$(_AndroidIntermediateJavaClassDirectory)" />
