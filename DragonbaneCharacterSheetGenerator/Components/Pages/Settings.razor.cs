@@ -7,16 +7,16 @@ namespace DragonbaneCharacterSheetGenerator.Components.Pages
     public partial class Settings
     {
         [Inject]
-        public DragonbaneCharacterSheetGenerator.Services.IThemeService ThemeService { get; set; }
+        public required DragonbaneCharacterSheetGenerator.Services.IThemeService ThemeService { get; set; }
 
         [Inject]
-        public DragonbaneCharacterSheetGenerator.Services.ILocalDocService LocalDocService { get; set; }
+        public required DragonbaneCharacterSheetGenerator.Services.ILocalDocService LocalDocService { get; set; }
 
         [Inject]
-        public DragonbaneCharacterSheetGenerator.Services.IFavoritesService FavoritesService { get; set; }
+        public required DragonbaneCharacterSheetGenerator.Services.IFavoritesService FavoritesService { get; set; }
 
         [Inject]
-        public IJSRuntime JS { get; set; }
+        public required IJSRuntime JS { get; set; }
 
         private async Task ToggleTheme()
         {
