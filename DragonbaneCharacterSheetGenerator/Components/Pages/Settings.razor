@@ -1,7 +1,4 @@
 @page "/settings"
-@inject DragonbaneCharacterSheetGenerator.Services.IThemeService ThemeService
-@inject DragonbaneCharacterSheetGenerator.Services.ILocalDocService LocalDocService
-@inject DragonbaneCharacterSheetGenerator.Services.IFavoritesService FavoritesService
 
 <h1>Settings</h1>
 
@@ -26,26 +23,3 @@
         <button class="btn btn-danger" @onclick="ClearFavorites">Remove all favorites</button>
     </p>
 </div>
-
-@code {
-    private async Task ToggleTheme()
-    {
-        await ThemeService.ToggleThemeAsync();
-    }
-
-    private async Task ImportJson()
-    {
-        var (ok, msg) = await LocalDocService.ImportJsonAsync();
-        // simple feedback - replace with toast later
-        await JS.InvokeVoidAsync("alert", ok ? msg : "Import failed: " + msg);
-    }
-
-    [Inject]
-    private IJSRuntime JS { get; set; }
-
-    private async Task ClearFavorites()
-    {
-        await FavoritesService.ClearAllAsync();
-        await JS.InvokeVoidAsync("alert", "All favorites removed.");
-    }
-}
