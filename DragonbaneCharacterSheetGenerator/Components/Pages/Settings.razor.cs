@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 using System.Threading.Tasks;
 
 namespace DragonbaneCharacterSheetGenerator.Components.Pages
@@ -18,10 +19,28 @@ namespace DragonbaneCharacterSheetGenerator.Components.Pages
         [Inject]
         public required IJSRuntime JS { get; set; }
 
+        private string CurrentTheme { get; set; } = "light";
+
+        protected override async Task OnInitializedAsync()
+        {
+            CurrentTheme = await ThemeService.GetThemeAsync();
+        }
+
         private async Task ToggleTheme()
         {
             await ThemeService.ToggleThemeAsync();
+            CurrentTheme = await ThemeService.GetThemeAsync();
         }
+
+        private async Task SetThemeAsync(string theme)
+        {
+            CurrentTheme = theme;
+            await ThemeService.SetThemeAsync(theme);
+        }
+
+        private Task SetLight() => SetThemeAsync("light");
+        private Task SetDark() => SetThemeAsync("dark");
+        private Task SetSystem() => SetThemeAsync("system");
 
         private async Task ImportJson()
         {

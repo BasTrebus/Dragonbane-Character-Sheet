@@ -24,7 +24,7 @@ namespace DragonbaneCharacterSheetGenerator.Services
         public async Task<string> GetThemeAsync()
         {
             var stored = Preferences.Get(PrefKey, string.Empty);
-            if (!string.IsNullOrWhiteSpace(stored)) return stored;
+            if (!string.IsNullOrWhiteSpace(stored)) return stored; // supports 'light', 'dark' or 'system'
 
             // ask JS for preferred scheme (falls back to 'light')
             try
@@ -57,7 +57,12 @@ namespace DragonbaneCharacterSheetGenerator.Services
         public async Task ToggleThemeAsync()
         {
             var current = await GetThemeAsync();
-            var next = current == "dark" ? "light" : "dark";
+            string next;
+            // cycle through dark -> light -> system -> dark
+            if (current == "dark") next = "light";
+            else if (current == "light") next = "system";
+            else next = "dark"; // covers 'system' and any other values
+
             await SetThemeAsync(next);
         }
     }
