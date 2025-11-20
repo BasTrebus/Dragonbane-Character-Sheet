@@ -49,6 +49,7 @@
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
+  <!-- IconKitchen outputs integration removed: assets are committed into Platforms/ and wwwroot/ -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.10" />
